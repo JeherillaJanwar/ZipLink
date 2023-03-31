@@ -1,0 +1,35 @@
+{
+    "name": "ziplink",
+    "version": "1.0.0",
+    "description": "Shorten URLS with ease",
+    "main": "server.js",
+    "dependencies": {
+      "dotenv": "^16.0.3",
+      "express": "^4.18.2",
+      "mongoose": "^7.0.3",
+      "path": "^0.12.7",
+      "prettier": "^2.8.7"
+    },
+    "scripts": {
+      "start": "node app/server.js",
+      "lint": "npx prettier --write .",
+      "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/JeherillaJanwar/ZipLink.git"
+    },
+    "keywords": [
+      "url",
+      "ZipLink",
+      "JeherillaJanwar",
+      "mongoDB"
+    ],
+    "author": "Ishaan Sharma (JeherillaJanwar)",
+    "license": "BSD-3-Clause",
+    "bugs": {
+      "url": "https://github.com/JeherillaJanwar/ZipLink/issues"
+    },
+    "homepage": "https://ziplink.cleverapps.io"
+  }
+  

@@ -1,0 +1,82 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta name="title" content="ZipLink" />
+    <meta
+      name="description"
+      content="Shorten URLs with ease. Open source on GitHub made by JeherillaJanwar."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="/" />
+    <meta property="og:title" content="ZipLink" />
+    <meta
+      property="og:description"
+      content="Shorten URLs with ease. Open source on GitHub made by JeherillaJanwar."
+    />
+    <meta property="og:image" content="../images/preview.png" />
+
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="/" />
+    <meta property="twitter:title" content="ZipLink" />
+    <meta
+      property="twitter:description"
+      content="Shorten URLs with ease. Open source on GitHub made by JeherillaJanwar."
+    />
+    <meta property="twitter:image:src" content="../images/preview.png" />
+
+    <meta name="title" content="ZipLink" />
+    <meta
+      name="description"
+      content="Shorten URLs with ease. Open source on GitHub made by JeherillaJanwar."
+    />
+
+    <title>ZipLink | URL Shortener</title>
+    <link rel="stylesheet" href="../css/main.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>ZipLink | URL Shortener</h1>
+      <form id="url-form">
+        <label for="url-input">Enter a URL to shorten:</label>
+        <input
+          type="text"
+          id="url-input"
+          required
+          placeholder="https://example.com"
+        />
+        <br />
+
+        <label for="alias">Customize URL:</label>
+        <input type="text" id="alias" placeholder="optional" />
+        <br />
+        <button type="submit">Shorten</button>
+      </form>
+      <div class="output" id="output" style="display: none">
+        <h2 id="h3">Shortened URL:</h2>
+        <h3 id="short-url"></h3>
+        <button id="copy-link">Copy Link</button>
+      </div>
+    </div>
+    <footer class="footer">
+      Open source project available on
+      <b
+        ><a href="https://github.com/JeherillaJanwar/ZipLink" target="_blank"
+          >GitHub</a
+        ></b
+      >
+      <br />
+      Made by
+      <b
+        ><a href="https://cutt.ly/328069i" target="_blank"
+          >Ishaan Sharma (JeherillaJanwar)</a
+        ></b
+      >
+      © 2023
+    </footer>
+
+    <script src="../js/main.js"></script>
+  </body>
+</html>

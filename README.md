@@ -60,9 +60,18 @@ $ npm start
 
 </details>
 
+
+<details>
+<summary>API</summary>
+<br>
+You can check the Swagger API documentation <a href="https://ziplink.cleverapps.io/api/docs">live here</a>.
+</details>
+
 <details>
 <summary>Self Hosting</summary>
+<br>
 To self-host ZipLink, just follow <a href="https://github.com/JeherillaJanwar/ZipLink/blob/main/docs/self_hosting.md">these steps</a>.
+
 </details>
 
 <details>

@@ -2,7 +2,7 @@
 
 ## Requirements
 
--   Mandatory: [Node.js](https://nodejs.org/en/) at least 16x (`16.15.1 LTS`) & NPM/
+-   Mandatory: [Node.js](https://nodejs.org/en/) at least 16x (`16.15.1 LTS`) & NPM
 -   Mandatory: Your domain name, example: `your.domain.name`
 
 ---

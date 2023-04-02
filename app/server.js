@@ -18,30 +18,6 @@ const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = yamlJS.load(path.join(__dirname + "/api/swagger.yaml"));
 const apiBasePath = "/api";
 
-const crypto = require("crypto");
-const algorithm = "aes-256-cbc"; // encryption algorithm
-const key = crypto.randomBytes(32); // generate a 256-bit key (32 bytes), secret key for encryption
-
-// Encryption function
-function encrypt(text) {
-  const iv = crypto.randomBytes(16); // generate initialization vector
-  const cipher = crypto.createCipheriv(algorithm, key, iv); // create cipher using algorithm and key
-  let encrypted = cipher.update(text);
-  encrypted = Buffer.concat([encrypted, cipher.final()]);
-  return iv.toString("hex") + ":" + encrypted.toString("hex"); // return iv and encrypted data as string
-}
-
-// Decryption function
-function decrypt(text) {
-  const parts = text.split(":");
-  const iv = Buffer.from(parts[0], "hex"); // get initialization vector from encrypted data
-  const encrypted = Buffer.from(parts[1], "hex"); // get encrypted data from encrypted data
-  const decipher = crypto.createDecipheriv(algorithm, key, iv); // create decipher using algorithm and key
-  let decrypted = decipher.update(encrypted);
-  decrypted = Buffer.concat([decrypted, decipher.final()]);
-  return decrypted.toString(); // return decrypted data as string
-}
-
 // Logger
 const Logs = require("./logs");
 const log = new Logs("server");
@@ -58,20 +34,66 @@ function valid(url) {
 mongoose
   .connect(MONGO_URL, { dbName: MONGO_DATABASE })
   .then(() => {
-    const generatedCodes = new Set();
-
-    function code(length) {
-      const chars =
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    async function generateUniqueCode(collection, length) {
       let code = "";
-      do {
-        for (let i = 0; i < length; i++) {
-          const randomIndex = Math.floor(Math.random() * chars.length);
-          code += chars[randomIndex];
+      const characters =
+        "_ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvqxyz0123456789-!";
+      const codeLength = length; // adjust this to change the length of the code
+      const totalPossibleCodes = Math.pow(characters.length, codeLength);
+      let attempts = 0;
+
+      while (attempts < totalPossibleCodes) {
+        // generate a random code
+        for (let i = 0; i < codeLength; i++) {
+          code += characters.charAt(
+            Math.floor(Math.random() * characters.length)
+          );
         }
-      } while (generatedCodes.has(code));
-      generatedCodes.add(code);
-      return code;
+
+        // check if the code exists in the collection
+        const result = await collection.findById(code);
+
+        if (!result) {
+          // code doesn't exist, return it
+          return code;
+        }
+
+        attempts++;
+      }
+
+      // if all possible codes have been used, generate a new code by appending a random number to the end
+      let newCode;
+      let maxAttempts = 10; // set a limit to the number of attempts to prevent an infinite loop
+      do {
+        newCode = code + Math.floor(Math.random() * 10);
+        const result = await collection.findById(newCode);
+        if (!result) {
+          return newCode;
+        }
+        maxAttempts--;
+      } while (maxAttempts > 0);
+
+      // if all appended numbers have been used, generate a new code by incrementing the last digit
+      let lastDigit = parseInt(code[codeLength - 1], 36) || 0;
+      if (lastDigit < 35) {
+        // set a limit to the last digit to prevent overflow
+        lastDigit++;
+      } else {
+        lastDigit = 0;
+      }
+      code = code.substr(0, codeLength - 1) + lastDigit.toString(36);
+      const result = await collection.findById(code);
+      if (!result) {
+        return code;
+      }
+
+      // if all possible codes have been used, recursively call the function to generate a new code
+      return generateUniqueCode(collection);
+    }
+
+    function isValidAlias(alias) {
+      // Check if the alias contains only valid URL characters
+      return /^[a-zA-Z0-9\-_~.]+$/.test(alias);
     }
 
     const now = new Date();
@@ -102,7 +124,7 @@ mongoose
     // Set up the route for shortening URLs
     app.get("/shorten", async (req, res) => {
       const { url, alias, ip } = req.query;
-      var random = code(8);
+      var random = await generateUniqueCode(Url, 8);
 
       if (valid(url)) {
         if (!ip) {
@@ -117,19 +139,23 @@ mongoose
               ip: ip,
             });
             await newUrl.save();
-            return res.send(encrypt(newUrl._id));
+            return res.send(newUrl._id);
           } else {
             const aliasFindOne = await Url.findById(alias);
             if (!aliasFindOne) {
-              // Create a new shortened URL
-              let newAliasUrl = new Url({
-                originalUrl: url,
-                _id: alias,
-                createdAt: when,
-                ip: ip,
-              });
-              await newAliasUrl.save();
-              return res.send(encrypt(newAliasUrl._id));
+              if (isValidAlias(alias)) {
+                // Create a new shortened URL
+                let newAliasUrl = new Url({
+                  originalUrl: url,
+                  _id: alias,
+                  createdAt: when,
+                  ip: ip,
+                });
+                await newAliasUrl.save();
+                return res.send(newAliasUrl._id);
+              } else {
+                return res.send("Invalid Alias");
+              }
             } else {
               return res.send("THIS alias isn't available");
             }
@@ -144,7 +170,7 @@ mongoose
       const protocol = req.protocol;
       const host = req.get("host");
       const { url, alias, ip } = req.query;
-      var random = code(8);
+      var random = generateUniqueCode(Url, 8);
       if (valid(url)) {
         if (!alias) {
           // Create a new shortened URL
@@ -163,16 +189,24 @@ mongoose
           const aliasFindOne = await Url.findById(alias);
 
           if (!aliasFindOne) {
-            // Create a new shortened URL
-            let newAliasUrl = new Url({
-              originalUrl: url,
-              _id: alias,
-              createdAt: when,
-              swagger: true,
-            });
-            await newAliasUrl.save();
-            var short = protocol + "://" + host + "/" + newAliasUrl._id;
-            return res.send(JSON.stringify({ shortened_url: short }, null, 4));
+            if (isValidAlias(alias)) {
+              // Create a new shortened URL
+              let newAliasUrl = new Url({
+                originalUrl: url,
+                _id: alias,
+                createdAt: when,
+                swagger: true,
+              });
+              await newAliasUrl.save();
+              var short = protocol + "://" + host + "/" + newAliasUrl._id;
+              return res.send(
+                JSON.stringify({ shortened_url: short }, null, 4)
+              );
+            } else {
+              return res.send(
+                JSON.stringify({ shortened_url: "Invalid Alias" }, null, 4)
+              );
+            }
           } else {
             res.setHeader("Content-Type", "application/json");
             res.send(
@@ -200,17 +234,6 @@ mongoose
         return res.redirect(url.originalUrl);
       } else {
         return res.sendFile(views.notFound);
-      }
-    });
-
-    app.get("/decrypt/:encryptedMessage", (req, res) => {
-      try {
-        const encryptedMessage = req.params.encryptedMessage;
-        const decryptedMessage = decrypt(encryptedMessage);
-        res.send(decryptedMessage);
-      } catch (err) {
-        log.error(err);
-        res.send(err);
       }
     });
 

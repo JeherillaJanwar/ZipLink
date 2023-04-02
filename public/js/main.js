@@ -35,13 +35,11 @@
             url
           )}&ip=${ip}`
         );
-        const shortId_encrypted = await response.text();
-          
-        const decrypt = await fetch(`/decrypt/${shortId_encrypted}`);
-        const shortId = await decrypt.text();
+      
+        const shortId = await response.text();
         const shortUrlString = `${window.location.href}${shortId}`;
 
-        if (shortId === "THIS alias isn't available") {
+        if (shortId === "THIS alias isn't available" || shortId === "Invalid Alias") {
           shortUrl.textContent = shortId;
           output.style.display = "inline-block";
           copyLinkButton.style.display = "none";
@@ -58,12 +56,10 @@
             url
           )}&alias=${alias}&ip=${ip}`
         );
-        const shortId_encrypted = await response.text();
-        const decrypt = await fetch(`/decrypt/${shortId_encrypted}`);
-        const shortId = await decrypt.text();
+        const shortId = await response.text();
         const shortUrlString = `${window.location.href}${shortId}`;
 
-        if (shortId === "THIS alias isn't available") {
+        if (shortId === "THIS alias isn't available" || shortId === "Invalid Alias") {
           shortUrl.textContent = shortId;
           h3.style.display = "none";
           output.style.display = "inline-block";

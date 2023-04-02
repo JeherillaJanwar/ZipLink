@@ -30,14 +30,19 @@ function valid(url) {
 mongoose
   .connect(MONGO_URL, { dbName: MONGO_DATABASE })
   .then(() => {
-    function code(x) {
-      let code = "";
-      const characters =
+    const generatedCodes = new Set();
+
+    function code(length) {
+      const chars =
         "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-      const charactersLength = characters.length;
-      for (let i = 0; i < x; i++) {
-        code += characters.charAt(Math.floor(Math.random() * charactersLength));
-      }
+      let code = "";
+      do {
+        for (let i = 0; i < length; i++) {
+          const randomIndex = Math.floor(Math.random() * chars.length);
+          code += chars[randomIndex];
+        }
+      } while (generatedCodes.has(code));
+      generatedCodes.add(code);
       return code;
     }
 
@@ -83,15 +88,20 @@ mongoose
           await newUrl.save();
           return res.send(newUrl._id);
         } else {
-          // Create a new shortened URL
-          let newAliasUrl = new Url({
-            originalUrl: url,
-            _id: alias,
-            createdAt: when,
-            ip: ip,
-          });
-          await newAliasUrl.save();
-          return res.send(newAliasUrl._id);
+          const aliasFindOne = await Url.findById(alias);
+          if (!aliasFindOne) {
+            // Create a new shortened URL
+            let newAliasUrl = new Url({
+              originalUrl: url,
+              _id: alias,
+              createdAt: when,
+              ip: ip,
+            });
+            await newAliasUrl.save();
+            return res.send(newAliasUrl._id);
+          } else {
+            return res.send("THIS alias isn't available");
+          }
         }
       } else {
         return res.send("Invalid URL");
@@ -116,16 +126,29 @@ mongoose
           var short = protocol + "://" + host + "/" + newUrl._id;
           return res.send(JSON.stringify({ shortened_url: short }, null, 4));
         } else {
-          // Create a new shortened URL
-          let newAliasUrl = new Url({
-            originalUrl: url,
-            _id: alias,
-            createdAt: when,
-            swagger: true,
-          });
-          await newAliasUrl.save();
-          var short = protocol + "://" + host + "/" + newAliasUrl._id;
-          return res.send(JSON.stringify({ shortened_url: short }, null, 4));
+          // checks
+          const aliasFindOne = await Url.findById(alias);
+
+          if (!aliasFindOne) {
+            // Create a new shortened URL
+            let newAliasUrl = new Url({
+              originalUrl: url,
+              _id: alias,
+              createdAt: when,
+              swagger: true,
+            });
+            await newAliasUrl.save();
+            var short = protocol + "://" + host + "/" + newAliasUrl._id;
+            return res.send(JSON.stringify({ shortened_url: short }, null, 4));
+          } else {
+            return res.send(
+              JSON.stringify(
+                { shortened_url: "THIS alias isn't available" },
+                null,
+                4
+              )
+            );
+          }
         }
       } else {
         return res.send("Invalid URL");
@@ -148,6 +171,10 @@ mongoose
 
     app.get(["/"], (req, res) => {
       res.sendFile(views.index);
+    });
+
+    app.get(["*"], (req, res) => {
+      res.sendFile(views.notFound);
     });
 
     // Start the server

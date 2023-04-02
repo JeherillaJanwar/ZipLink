@@ -35,10 +35,17 @@ form.addEventListener("submit", async (event) => {
       const shortId = await response.text();
       const shortUrlString = `${window.location.href}${shortId}`;
 
-      copyLinkButton.textContent = "Copy";
-      copyLinkButton.style.display = "inline-block";
-      shortUrl.textContent = shortUrlString;
-      output.style.display = "inline-block";
+      if (shortId === "THIS alias isn't available") {
+        shortUrl.textContent = shortId;
+        output.style.display = "inline-block";
+        copyLinkButton.style.display = "none";
+        h3.style.display = "none";
+      } else {
+        copyLinkButton.textContent = "Copy";
+        copyLinkButton.style.display = "inline-block";
+        shortUrl.textContent = shortUrlString;
+        output.style.display = "inline-block";
+      }
     } else {
       const response = await fetch(
         `/shorten?url=${encodeURIComponent(url)}&alias=${alias}&ip=${ip}`
@@ -46,10 +53,17 @@ form.addEventListener("submit", async (event) => {
       const shortId = await response.text();
       const shortUrlString = `${window.location.href}${shortId}`;
 
-      copyLinkButton.textContent = "Copy";
-      copyLinkButton.style.display = "inline-block";
-      shortUrl.textContent = shortUrlString;
-      output.style.display = "inline-block";
+      if (shortId === "THIS alias isn't available") {
+        shortUrl.textContent = shortId;
+        h3.style.display = "none";
+        output.style.display = "inline-block";
+        copyLinkButton.style.display = "none";
+      } else {
+        copyLinkButton.textContent = "Copy";
+        copyLinkButton.style.display = "inline-block";
+        shortUrl.textContent = shortUrlString;
+        output.style.display = "inline-block";
+      }
     }
   } else {
     h3.style.display = "none";

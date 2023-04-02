@@ -31,9 +31,14 @@
     if (valid(url)) {
       if (!alias) {
         const response = await fetch(
-          `/shorten?url=${encodeURIComponent(url)}&ip=${ip}`
+          `/shorten?url=${encodeURIComponent(
+            url
+          )}&ip=${ip}`
         );
-        const shortId = await response.text();
+        const shortId_encrypted = await response.text();
+          
+        const decrypt = await fetch(`/decrypt/${shortId_encrypted}`);
+        const shortId = await decrypt.text();
         const shortUrlString = `${window.location.href}${shortId}`;
 
         if (shortId === "THIS alias isn't available") {
@@ -49,9 +54,13 @@
         }
       } else {
         const response = await fetch(
-          `/shorten?url=${encodeURIComponent(url)}&alias=${alias}&ip=${ip}`
+          `/shorten?url=${encodeURIComponent(
+            url
+          )}&alias=${alias}&ip=${ip}`
         );
-        const shortId = await response.text();
+        const shortId_encrypted = await response.text();
+        const decrypt = await fetch(`/decrypt/${shortId_encrypted}`);
+        const shortId = await decrypt.text();
         const shortUrlString = `${window.location.href}${shortId}`;
 
         if (shortId === "THIS alias isn't available") {

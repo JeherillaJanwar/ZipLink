@@ -18,6 +18,30 @@ const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = yamlJS.load(path.join(__dirname + "/api/swagger.yaml"));
 const apiBasePath = "/api";
 
+const crypto = require("crypto");
+const algorithm = "aes-256-cbc"; // encryption algorithm
+const key = crypto.randomBytes(32); // generate a 256-bit key (32 bytes), secret key for encryption
+
+// Encryption function
+function encrypt(text) {
+  const iv = crypto.randomBytes(16); // generate initialization vector
+  const cipher = crypto.createCipheriv(algorithm, key, iv); // create cipher using algorithm and key
+  let encrypted = cipher.update(text);
+  encrypted = Buffer.concat([encrypted, cipher.final()]);
+  return iv.toString("hex") + ":" + encrypted.toString("hex"); // return iv and encrypted data as string
+}
+
+// Decryption function
+function decrypt(text) {
+  const parts = text.split(":");
+  const iv = Buffer.from(parts[0], "hex"); // get initialization vector from encrypted data
+  const encrypted = Buffer.from(parts[1], "hex"); // get encrypted data from encrypted data
+  const decipher = crypto.createDecipheriv(algorithm, key, iv); // create decipher using algorithm and key
+  let decrypted = decipher.update(encrypted);
+  decrypted = Buffer.concat([decrypted, decipher.final()]);
+  return decrypted.toString(); // return decrypted data as string
+}
+
 // Logger
 const Logs = require("./logs");
 const log = new Logs("server");
@@ -93,7 +117,7 @@ mongoose
               ip: ip,
             });
             await newUrl.save();
-            return res.send(newUrl._id);
+            return res.send(encrypt(newUrl._id));
           } else {
             const aliasFindOne = await Url.findById(alias);
             if (!aliasFindOne) {
@@ -105,7 +129,7 @@ mongoose
                 ip: ip,
               });
               await newAliasUrl.save();
-              return res.send(newAliasUrl._id);
+              return res.send(encrypt(newAliasUrl._id));
             } else {
               return res.send("THIS alias isn't available");
             }
@@ -176,6 +200,17 @@ mongoose
         return res.redirect(url.originalUrl);
       } else {
         return res.sendFile(views.notFound);
+      }
+    });
+
+    app.get("/decrypt/:encryptedMessage", (req, res) => {
+      try {
+        const encryptedMessage = req.params.encryptedMessage;
+        const decryptedMessage = decrypt(encryptedMessage);
+        res.send(decryptedMessage);
+      } catch (err) {
+        log.error(err);
+        res.send(err);
       }
     });
 

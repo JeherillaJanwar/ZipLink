@@ -1,20 +1,24 @@
 require("dotenv").config();
 const express = require("express");
-const mongoose = require("mongoose");
 const path = require("path");
 const app = express();
-const MONGO_URL = process.env.mongo_url;
-const MONGO_DATABASE = process.env.db;
 const http = require("http");
 const server = http.createServer(app);
 const port = 8080;
 const validUrl = require("valid-url");
 
+// MongoDB
+const mongoose = require("mongoose");
+const MONGO_URL = process.env.mongo_url;
+const MONGO_DATABASE = process.env.db;
+
+// Swagger config
 const yamlJS = require("yamljs");
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = yamlJS.load(path.join(__dirname + "/api/swagger.yaml"));
-
 const apiBasePath = "/api";
+
+// Logger
 const Logs = require("./logs");
 const log = new Logs("server");
 
@@ -77,30 +81,34 @@ mongoose
       var random = code(8);
 
       if (valid(url)) {
-        if (!alias) {
-          // Create a new shortened URL
-          let newUrl = new Url({
-            _id: random,
-            originalUrl: url,
-            createdAt: when,
-            ip: ip,
-          });
-          await newUrl.save();
-          return res.send(newUrl._id);
+        if (!ip) {
+          return res.send("No IP provided");
         } else {
-          const aliasFindOne = await Url.findById(alias);
-          if (!aliasFindOne) {
+          if (!alias) {
             // Create a new shortened URL
-            let newAliasUrl = new Url({
+            let newUrl = new Url({
+              _id: random,
               originalUrl: url,
-              _id: alias,
               createdAt: when,
               ip: ip,
             });
-            await newAliasUrl.save();
-            return res.send(newAliasUrl._id);
+            await newUrl.save();
+            return res.send(newUrl._id);
           } else {
-            return res.send("THIS alias isn't available");
+            const aliasFindOne = await Url.findById(alias);
+            if (!aliasFindOne) {
+              // Create a new shortened URL
+              let newAliasUrl = new Url({
+                originalUrl: url,
+                _id: alias,
+                createdAt: when,
+                ip: ip,
+              });
+              await newAliasUrl.save();
+              return res.send(newAliasUrl._id);
+            } else {
+              return res.send("THIS alias isn't available");
+            }
           }
         }
       } else {

@@ -82,7 +82,7 @@ mongoose
 
       if (valid(url)) {
         if (!ip) {
-          return res.send("No IP provided");
+          return res.status(403).json({ error: "No IP provided!" });
         } else {
           if (!alias) {
             // Create a new shortened URL
@@ -132,7 +132,8 @@ mongoose
           });
           await newUrl.save();
           var short = protocol + "://" + host + "/" + newUrl._id;
-          return res.send(JSON.stringify({ shortened_url: short }, null, 4));
+          res.setHeader("Content-Type", "application/json");
+          res.send(JSON.stringify({ shortened_url: short }, null, 4));
         } else {
           // checks
           const aliasFindOne = await Url.findById(alias);
@@ -149,7 +150,8 @@ mongoose
             var short = protocol + "://" + host + "/" + newAliasUrl._id;
             return res.send(JSON.stringify({ shortened_url: short }, null, 4));
           } else {
-            return res.send(
+            res.setHeader("Content-Type", "application/json");
+            res.send(
               JSON.stringify(
                 { shortened_url: "THIS alias isn't available" },
                 null,

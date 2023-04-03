@@ -228,7 +228,7 @@ mongoose
     app.get("/api/shorten", async (req, res) => {
       const protocol = req.protocol;
       const host = req.get("host");
-      const { url, alias, ip } = req.query;
+      const { url, alias } = req.query;
       var random = await generateUniqueAlias(Url, 8);
       if (valid(url)) {
         if (!alias) {

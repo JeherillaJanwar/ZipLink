@@ -20,4 +20,12 @@ curl -X 'GET' 'https://ziplink.cleverapps.io/api/shorten?url=https://google.com/
 This produces a shortened URL, with a custom alias (in this case <code>google</code>), by a GET request to ZipLink.
 
 
+### Delete A URL WITH ACCESS KEY
+
+```bash
+curl -X 'GET' 'https://ziplink.cleverapps.io/short/delete?accessKey=${url key}' -H 'accept: application/json'
+```
+This deletes a short URL, produced from ZipLink. Make sure to provide the access key.
+
+
 Moreover, you can check out the API documentation <a href="https://ziplink.cleverapps.io/api/docs">live here</a> (Swagger).

@@ -82,6 +82,12 @@
 
         <br />
         <button id="shorten">Shorten</button>
+        <br />
+        <div style="text-align: center">
+          <button id="delete_URL" style="width: 50%; background-color: red">
+            Delete A URL
+          </button>
+        </div>
       </i>
       <div class="output" id="output" style="display: none">
         <h2 id="h3">Shortened URL:</h2>
@@ -89,8 +95,15 @@
         <button id="copy-link">
           <i class="far fa-copy"></i>&nbsp;Copy Link
         </button>
+        <button id="showAccessKeyBTN">
+          <i class="fas fa-key"></i>&nbsp;Show Access Key
+        </button>
         <button id="redo">
           <i class="fas fa-redo-alt"></i>&nbsp;Shorten Another URL
+        </button>
+
+        <button id="undo">
+          <i class="fas fa-undo-alt"></i>&nbsp;Delete Short URL
         </button>
       </div>
     </div>
@@ -110,6 +123,8 @@
       >
       © 2023
     </footer>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3"></script>
     <script src="https://code.jquery.com/jquery-3.6.3.js"></script>
     <script src="../js/main.js"></script>
   </body>

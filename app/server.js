@@ -11,6 +11,7 @@ const validUrl = require("valid-url");
 const mongoose = require("mongoose");
 const MONGO_URL = process.env.mongo_url;
 const MONGO_DATABASE = process.env.db;
+const Url = require("./model/url.js");
 
 // Swagger config
 const yamlJS = require("yamljs");
@@ -22,19 +23,38 @@ const apiBasePath = "/api";
 const Logs = require("./lib/logs");
 const log = new Logs("server");
 
-function valid(url) {
-  if (validUrl.isUri(url)) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
 // Connect to MongoDB using Mongoose
 mongoose
   .connect(MONGO_URL, { dbName: MONGO_DATABASE })
   .then(() => {
-    async function generateUniqueCode(collection, length) {
+    function valid(url) {
+      if (validUrl.isUri(url)) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+    function uuid() {
+      let d = new Date().getTime();
+      if (
+        typeof performance !== "undefined" &&
+        typeof performance.now === "function"
+      ) {
+        d += performance.now(); //use high-precision timer if available
+      }
+      const uuid = "xxxxxxxx-xxxx-xxxx-yxxx-xxxxxxxxxxxx".replace(
+        /[xy]/g,
+        function (c) {
+          const r = (d + Math.random() * 16) % 16 | 0;
+          d = Math.floor(d / 16);
+          return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
+        }
+      );
+      return uuid;
+    }
+
+    async function generateUniqueAlias(collection, length) {
       let code = "";
       const characters =
         "_ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvqxyz0123456789-!";
@@ -88,7 +108,7 @@ mongoose
       }
 
       // if all possible codes have been used, recursively call the function to generate a new code
-      return generateUniqueCode(collection);
+      return generateUniqueAlias(collection);
     }
 
     function isValidAlias(alias) {
@@ -110,10 +130,31 @@ mongoose
     app.use(express.static(dir.public));
     app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
+    app.delete("/short/delete", async (req, res) => {
+      const { accessKey } = req.query;
+
+      if (!accessKey) {
+        res.send("No Access Key Provided");
+      }
+
+      const protocol = req.protocol;
+      const host = req.get("host");
+      const findOne = await Url.findOne({ accessKey: accessKey });
+      const deleted_url = protocol + "://" + host + "/" + findOne._id;
+      if (findOne) {
+        await Url.deleteOne({ _id: findOne._id });
+        return res
+          .status(200)
+          .json({ status: "Short URL deleted!", deleted_url: deleted_url });
+      } else {
+        return res.status(403).json({ status: "Access Key Not Found!" });
+      }
+    });
+
     // Set up the route for shortening URLs
     app.get("/shorten", async (req, res) => {
       const { url, alias, ip } = req.query;
-      var random = await generateUniqueCode(Url, 8);
+      var random = await generateUniqueAlias(Url, 8);
 
       if (valid(url)) {
         if (!ip) {
@@ -126,9 +167,23 @@ mongoose
               originalUrl: url,
               createdAt: when,
               ip: ip,
+              accessKey: uuid(),
             });
             await newUrl.save();
-            return res.send(newUrl._id);
+            const protocol = req.protocol;
+            const host = req.get("host");
+            var short = protocol + "://" + host + "/" + newUrl._id;
+            return res.send(
+              JSON.stringify(
+                {
+                  shortened_url: short,
+                  accessKey: newUrl.accessKey,
+                  shortId: newUrl._id,
+                },
+                null,
+                4
+              )
+            );
           } else {
             const aliasFindOne = await Url.findById(alias);
             if (!aliasFindOne) {
@@ -139,9 +194,24 @@ mongoose
                   _id: alias,
                   createdAt: when,
                   ip: ip,
+                  accessKey: uuid(),
                 });
                 await newAliasUrl.save();
-                return res.send(newAliasUrl._id);
+
+                const protocol = req.protocol;
+                const host = req.get("host");
+                var short = protocol + "://" + host + "/" + newAliasUrl._id;
+                return res.send(
+                  JSON.stringify(
+                    {
+                      shortened_url: short,
+                      accessKey: newAliasUrl.accessKey,
+                      shortId: newAliasUrl._id,
+                    },
+                    null,
+                    4
+                  )
+                );
               } else {
                 return res.send("Invalid Alias");
               }
@@ -159,7 +229,7 @@ mongoose
       const protocol = req.protocol;
       const host = req.get("host");
       const { url, alias, ip } = req.query;
-      var random = await generateUniqueCode(Url, 8);
+      var random = await generateUniqueAlias(Url, 8);
       if (valid(url)) {
         if (!alias) {
           // Create a new shortened URL
@@ -167,12 +237,23 @@ mongoose
             _id: random,
             originalUrl: url,
             createdAt: when,
-            swagger: true,
+            api: true,
+            accessKey: uuid(),
           });
           await newUrl.save();
           var short = protocol + "://" + host + "/" + newUrl._id;
           res.setHeader("Content-Type", "application/json");
-          res.send(JSON.stringify({ shortened_url: short }, null, 4));
+          res.send(
+            JSON.stringify(
+              {
+                shortened_url: short,
+                accessKey: newUrl.accessKey,
+                shortId: newUrl._id,
+              },
+              null,
+              4
+            )
+          );
         } else {
           // checks
           const aliasFindOne = await Url.findById(alias);
@@ -184,12 +265,20 @@ mongoose
                 originalUrl: url,
                 _id: alias,
                 createdAt: when,
-                swagger: true,
+                api: true,
               });
               await newAliasUrl.save();
               var short = protocol + "://" + host + "/" + newAliasUrl._id;
               return res.send(
-                JSON.stringify({ shortened_url: short }, null, 4)
+                JSON.stringify(
+                  {
+                    shortened_url: short,
+                    accessKey: newAliasUrl.accessKey,
+                    shortId: newAliasUrl._id,
+                  },
+                  null,
+                  4
+                )
               );
             } else {
               return res.send(

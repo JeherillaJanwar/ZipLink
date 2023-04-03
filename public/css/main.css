@@ -147,7 +147,10 @@ input[type="text"] {
   background-color: #f0f0f0;
 }
 
-#copy-link {
+#copy-link,
+#redo,
+#showAccessKeyBTN,
+#undo {
   margin-top: 20px;
   padding: 10px;
   font-size: 18px;
@@ -158,22 +161,10 @@ input[type="text"] {
   cursor: pointer;
 }
 
-#copy-link:hover {
-  background-color: #555;
-}
-
-#redo {
-  margin-top: 20px;
-  padding: 10px;
-  font-size: 18px;
-  background-color: #333;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-#redo:hover {
+#copy-link:hover,
+#redo:hover,
+#showAccessKeyBTN:hover,
+#undo:hover {
   background-color: #555;
 }
 

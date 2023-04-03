@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 // Create a schema for URLs
 const urlSchema = new mongoose.Schema({
     _id: { type: String },
+    accessKey: { type: String },
     originalUrl: { type: String },
     createdAt: { type: String },
     ip: { type: String },

@@ -65,13 +65,16 @@
         <label for="alias">Customize URL:</label>
         <input type="text" id="alias" placeholder="optional" />
         <br />
-        <button type="submit">Shorten</button>
+        <button type="submit" id="shorten">Shorten</button>
       </form>
       <div class="output" id="output" style="display: none">
         <h2 id="h3">Shortened URL:</h2>
         <h3 id="short-url"></h3>
         <button id="copy-link">
           <i class="far fa-copy"></i>&nbsp;Copy Link
+        </button>
+        <button id="redo">
+          <i class="fas fa-redo-alt"></i>&nbsp;Shorten Another URL
         </button>
       </div>
     </div>

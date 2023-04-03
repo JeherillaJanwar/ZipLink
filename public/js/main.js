@@ -5,6 +5,8 @@
   const output = document.querySelector("#output");
   const shortUrl = document.querySelector("#short-url");
   const h3 = document.querySelector("#h3");
+  const redo = document.querySelector("#redo");
+  const shorten = document.querySelector("#shorten");
 
   function valid(url) {
     try {
@@ -21,6 +23,23 @@
     return data.ip;
   }
 
+  input.addEventListener("keydown", function (event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+    }
+  });
+
+  aliasInput.addEventListener("keydown", function (event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+    }
+  });
+
+  redo.addEventListener("click", async (event) => {
+    event.preventDefault();
+    location.reload();
+  });
+
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
     const copyLinkButton = document.getElementById("copy-link");
@@ -35,19 +54,26 @@
             url
           )}&ip=${ip}`
         );
-      
+
         const shortId = await response.text();
         const shortUrlString = `${window.location.href}${shortId}`;
 
-        if (shortId === "THIS alias isn't available" || shortId === "Invalid Alias") {
+        if (
+          shortId === "THIS alias isn't available" ||
+          shortId === "Invalid Alias"
+        ) {
           shortUrl.textContent = shortId;
           output.style.display = "inline-block";
           copyLinkButton.style.display = "none";
           h3.style.display = "none";
+          redo.style.display = "none";
+          shorten.style.display = "none";
         } else {
           copyLinkButton.style.display = "inline-block";
           shortUrl.textContent = shortUrlString;
           output.style.display = "inline-block";
+          redo.style.display = "inline-block";
+          shorten.style.display = "none";
         }
       } else {
         const response = await fetch(
@@ -55,18 +81,26 @@
             url
           )}&alias=${alias}&ip=${ip}`
         );
+
         const shortId = await response.text();
         const shortUrlString = `${window.location.href}${shortId}`;
 
-        if (shortId === "THIS alias isn't available" || shortId === "Invalid Alias") {
+        if (
+          shortId === "THIS alias isn't available" ||
+          shortId === "Invalid Alias"
+        ) {
           shortUrl.textContent = shortId;
           h3.style.display = "none";
           output.style.display = "inline-block";
           copyLinkButton.style.display = "none";
+          redo.style.display = "none";
+          shorten.style.display = "none";
         } else {
           copyLinkButton.style.display = "inline-block";
           shortUrl.textContent = shortUrlString;
           output.style.display = "inline-block";
+          redo.style.display = "inline-block";
+          shorten.style.display = "none";
         }
       }
     } else {

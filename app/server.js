@@ -170,7 +170,7 @@ mongoose
       const protocol = req.protocol;
       const host = req.get("host");
       const { url, alias, ip } = req.query;
-      var random = generateUniqueCode(Url, 8);
+      var random = await generateUniqueCode(Url, 8);
       if (valid(url)) {
         if (!alias) {
           // Create a new shortened URL

@@ -93,7 +93,8 @@ To self-host ZipLink, just follow <a href="https://github.com/JeherillaJanwar/Zi
 <details>
 <summary>Live Demos</summary>
 <a href="https://ziplink.cleverapps.io/">https://ziplink.cleverapps.io/</a>
-<a href="https://ziplink.cleverapps.io/"><img src="../images/qr.png" /></a>
+
+[![qr](public/images/qr.png)](https://ziplink.cleverapps.io)
 </details>
 
 <details>

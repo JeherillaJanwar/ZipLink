@@ -115,7 +115,7 @@ mongoose
       originalUrl: { type: String },
       createdAt: { type: String },
       ip: { type: String },
-      swagger: { type: Boolean, enum: [true, false], default: false },
+      api: { type: Boolean, enum: [true, false], default: false }, // If the url is generated from the API
     });
 
     // Create a model for URLs using the schema

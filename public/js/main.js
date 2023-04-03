@@ -6,7 +6,22 @@
   const shortUrl = document.querySelector("#short-url");
   const h3 = document.querySelector("#h3");
   const redo = document.querySelector("#redo");
-  const shorten = document.querySelector("#shorten");
+  const shortenBTN = document.querySelector("#shorten");
+  var toggle = document.getElementById("toggle-switch");
+  var custom_title = document.getElementById("custom");
+  var toggle_contain = document.getElementById("toggle_contain");
+  const shortenedUrl = document.getElementById("short-url");
+  const copyLinkButton = document.getElementById("copy-link");
+
+  toggle.addEventListener("change", function () {
+    if (this.checked) {
+      aliasInput.style.display = "block";
+      custom_title.style.display = "block";
+    } else {
+      $("#alias").hide();
+      $("#custom").hide();
+    }
+  });
 
   function valid(url) {
     try {
@@ -40,9 +55,12 @@
     location.reload();
   });
 
-  form.addEventListener("submit", async (event) => {
+  shortenBTN.addEventListener("click", async (event) => {
     event.preventDefault();
-    const copyLinkButton = document.getElementById("copy-link");
+    shortenBTN.textContent = "Loading... Please Wait";
+
+    $("#toggle_contain").hide();
+    $("#toggle-switch").hide();
     const url = input.value;
     const alias = aliasInput.value;
     var ip = await getPublicIp();
@@ -64,16 +82,22 @@
         ) {
           shortUrl.textContent = shortId;
           output.style.display = "inline-block";
-          copyLinkButton.style.display = "none";
-          h3.style.display = "none";
-          redo.style.display = "none";
-          shorten.style.display = "none";
+          $("#copy-link").hide();
+
+          $("#redo").hide();
+          $("#h3").hide();
+
+          $("#shorten").hide();
+          $("#toggle_contain").hide();
+          $("#toggle-switch").hide();
         } else {
           copyLinkButton.style.display = "inline-block";
           shortUrl.textContent = shortUrlString;
           output.style.display = "inline-block";
           redo.style.display = "inline-block";
-          shorten.style.display = "none";
+          $("#shorten").hide();
+          $("#toggle_contain").hide();
+          $("#toggle-switch").hide();
         }
       } else {
         const response = await fetch(
@@ -90,32 +114,37 @@
           shortId === "Invalid Alias"
         ) {
           shortUrl.textContent = shortId;
-          h3.style.display = "none";
           output.style.display = "inline-block";
-          copyLinkButton.style.display = "none";
-          redo.style.display = "none";
-          shorten.style.display = "none";
+
+          $("#redo").hide();
+          $("#copy-link").hide();
+          $("#h3").hide();
+
+          $("#shorten").hide();
+          $("#toggle_contain").hide();
+          $("#toggle-switch").hide();
         } else {
           copyLinkButton.style.display = "inline-block";
           shortUrl.textContent = shortUrlString;
           output.style.display = "inline-block";
           redo.style.display = "inline-block";
-          shorten.style.display = "none";
+
+          $("#shorten").hide();
+          $("#toggle_contain").hide();
+          $("#toggle-switch").hide();
         }
       }
     } else {
-      h3.style.display = "none";
-      copyLinkButton.style.display = "none";
+      $("#h3").hide();
+      $("#copy-link").hide();
+      $("#shorten").hide();
       shortUrl.textContent = "Invalid URL";
       output.style.display = "inline-block";
     }
   });
 
   document.addEventListener("DOMContentLoaded", () => {
-    const copyLinkButton = document.getElementById("copy-link");
-
     copyLinkButton.addEventListener("click", () => {
-      const shortenedUrl = document.getElementById("short-url");
       copyToClipboard(shortenedUrl);
       copyLinkButton.textContent = "Link Copied!";
     });

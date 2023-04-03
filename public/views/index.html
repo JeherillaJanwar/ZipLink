@@ -52,7 +52,7 @@
   <body>
     <div class="container">
       <h1>ZipLink | URL Shortener</h1>
-      <form id="url-form">
+      <i id="url-form">
         <label for="url-input">Enter a URL to shorten:</label>
         <input
           type="text"
@@ -62,11 +62,27 @@
         />
         <br />
 
-        <label for="alias">Customize URL:</label>
-        <input type="text" id="alias" placeholder="optional" />
+        <div class="toggle-container" id="toggle_contain">
+          <label for="toggle-switch">Custom Alias/Name</label>
+          <label class="switch">
+            <input type="checkbox" id="toggle-switch" />
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <label for="alias" id="custom" style="display: none"
+          >Customize URL:</label
+        >
+        <input
+          type="text"
+          id="alias"
+          style="display: none"
+          placeholder="optional"
+        />
+
         <br />
-        <button type="submit" id="shorten">Shorten</button>
-      </form>
+        <button id="shorten">Shorten</button>
+      </i>
       <div class="output" id="output" style="display: none">
         <h2 id="h3">Shortened URL:</h2>
         <h3 id="short-url"></h3>
@@ -94,7 +110,7 @@
       >
       © 2023
     </footer>
-
+    <script src="https://code.jquery.com/jquery-3.6.3.js"></script>
     <script src="../js/main.js"></script>
   </body>
 </html>

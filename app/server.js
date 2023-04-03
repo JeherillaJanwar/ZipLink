@@ -263,6 +263,7 @@ mongoose
               // Create a new shortened URL
               let newAliasUrl = new Url({
                 originalUrl: url,
+                accessKey: uuid(),
                 _id: alias,
                 createdAt: when,
                 api: true,

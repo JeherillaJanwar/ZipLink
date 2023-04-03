@@ -179,6 +179,17 @@
         );
         const accessKey = shortId.accessKey;
         const shortUrlString = `${window.location.href}${shortId.shortId}`;
+        
+        
+        showAccessKeyBTN.addEventListener("click", async (event) => {
+          Swal.fire({
+            background: "#000",
+            icon: "success",
+            position: "center",
+            title: "Access Key",
+            html: `<h3 style="color:white">${accessKey}</h3><br> <h3 style="color:white">Note: Don't give this access key if you don't want anyone to use and delete the URL.</h3>`,
+          });
+        });
 
         if (
           shortId === "THIS alias isn't available" ||

@@ -63,8 +63,24 @@ $ npm start
 
 <details>
 <summary>API</summary>
-<br>
-You can check the Swagger API documentation <a href="https://ziplink.cleverapps.io/api/docs">live here</a>.
+
+##### Shorten A URL
+
+```bash
+curl -X 'GET' 'https://ziplink.cleverapps.io/api/shorten?url=https://google.com/' -H 'accept: application/json'
+```
+This produces a shortened URL, with a random alias, by a GET request to ZipLink.
+
+
+##### Shorten A URL WITH CUSTOMIZED ALIAS
+
+```bash
+curl -X 'GET' 'https://ziplink.cleverapps.io/api/shorten?url=https://google.com/&alias=google' -H 'accept: application/json'
+```
+This produces a shortened URL, with a custom alias (in this case <code>google</code>), by a GET request to ZipLink.
+
+
+Moreover, you can check out the API documentation <a href="https://ziplink.cleverapps.io/api/docs">live here</a> (Swagger).
 </details>
 
 <details>
@@ -75,10 +91,15 @@ To self-host ZipLink, just follow <a href="https://github.com/JeherillaJanwar/Zi
 </details>
 
 <details>
+<summary>Live Demos</summary>
+<a href="https://ziplink.cleverapps.io/">https://ziplink.cleverapps.io/</a>
+<a href="https://ziplink.cleverapps.io/"><img src="../images/qr.png" /></a>
+</details>
+
+<details>
 <summary>License</summary>
 
 ```text
-
 BSD 3-Clause License
 
 Copyright (c) 2023, Ishaan S.

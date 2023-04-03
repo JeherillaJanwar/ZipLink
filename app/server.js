@@ -19,7 +19,7 @@ const swaggerDocument = yamlJS.load(path.join(__dirname + "/api/swagger.yaml"));
 const apiBasePath = "/api";
 
 // Logger
-const Logs = require("./logs");
+const Logs = require("./lib/logs");
 const log = new Logs("server");
 
 function valid(url) {
@@ -109,17 +109,6 @@ mongoose
 
     app.use(express.static(dir.public));
     app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-    // Create a schema for URLs
-    const urlSchema = new mongoose.Schema({
-      _id: { type: String },
-      originalUrl: { type: String },
-      createdAt: { type: String },
-      ip: { type: String },
-      api: { type: Boolean, enum: [true, false], default: false }, // If the url is generated from the API
-    });
-
-    // Create a model for URLs using the schema
-    const Url = mongoose.model("Url", urlSchema);
 
     // Set up the route for shortening URLs
     app.get("/shorten", async (req, res) => {

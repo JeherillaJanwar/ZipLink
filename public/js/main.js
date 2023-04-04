@@ -235,9 +235,14 @@
         }
       }
     } else {
-      $("#h3").hide();
       $("#copy-link").hide();
+      $("#redo").hide();
+      $("#undo").hide();
+      $("#h3").hide();
+      $("#showAccessKeyBTN").hide();
       $("#shorten").hide();
+      $("#toggle_contain").hide();
+      $("#toggle-switch").hide();
       shortUrl.textContent = "Invalid URL";
       output.style.display = "inline-block";
     }

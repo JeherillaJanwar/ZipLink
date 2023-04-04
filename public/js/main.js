@@ -33,6 +33,7 @@
       html: `<h1 style="color:white">Enter the URL access key</h1>`,
       input: "text",
       inputPlaceholder: "URL access key",
+      showCancelButton: true,
       inputValidator: (value) => {
         if (!value) {
           return "Please enter the URL Access Key";

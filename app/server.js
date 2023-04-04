@@ -130,24 +130,29 @@ mongoose
     app.use(express.static(dir.public));
     app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
+    // Set up the route to delete URLs
     app.delete("/short/delete", async (req, res) => {
       const { accessKey } = req.query;
 
       if (!accessKey) {
-        res.send("No Access Key Provided");
+        res.status(403).json({ status: "Access Key is Not Provided!" });
       }
 
-      const protocol = req.protocol;
-      const host = req.get("host");
-      const findOne = await Url.findOne({ accessKey: accessKey });
-      const deleted_url = protocol + "://" + host + "/" + findOne._id;
-      if (findOne) {
-        await Url.deleteOne({ _id: findOne._id });
-        return res
-          .status(200)
-          .json({ status: "Short URL deleted!", deleted_url: deleted_url });
-      } else {
-        return res.status(403).json({ status: "Access Key Not Found!" });
+      try {
+        const protocol = req.protocol;
+        const host = req.get("host");
+        const findOne = await Url.findOne({ accessKey: accessKey });
+        const deleted_url = protocol + "://" + host + "/" + findOne._id;
+        if (findOne) {
+          await Url.deleteOne({ _id: findOne._id });
+          return res
+            .status(200)
+            .json({ status: "Short URL deleted!", deleted_url: deleted_url });
+        } else {
+          return res.status(403).json({ status: "Access Key was Not Found!" });
+        }
+      } catch (err) {
+        res.status(403).json({ status: err });
       }
     });
 

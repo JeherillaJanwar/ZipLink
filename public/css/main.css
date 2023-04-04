@@ -150,7 +150,8 @@ input[type="text"] {
 #copy-link,
 #redo,
 #showAccessKeyBTN,
-#undo {
+#undo,
+#download {
   margin-top: 20px;
   padding: 10px;
   font-size: 18px;
@@ -161,6 +162,7 @@ input[type="text"] {
   cursor: pointer;
 }
 
+#download:hover,
 #copy-link:hover,
 #redo:hover,
 #showAccessKeyBTN:hover,

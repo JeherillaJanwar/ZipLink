@@ -15,6 +15,7 @@
   const showAccessKeyBTN = document.getElementById("showAccessKeyBTN");
   const copyLinkButton = document.getElementById("copy-link");
   const delete_URL = document.getElementById("delete_URL");
+  const download = document.getElementById("download");
 
   toggle.addEventListener("change", function () {
     if (this.checked) {
@@ -58,6 +59,13 @@
       }
     });
   });
+
+  function getDateTimeString() {
+    const d = new Date();
+    const date = d.toISOString().split("T")[0];
+    const time = d.toTimeString().split(" ")[0];
+    return `${date}-${time}`;
+  }
 
   function valid(url) {
     try {
@@ -115,6 +123,18 @@
         const shortId = res.shortId;
         const shortUrlString = `${window.location.href}${res.shortId}`;
 
+        download.addEventListener("click", async (event) => {
+          let a = document.createElement("a");
+          let download = [res.shortId, res.accessKey, res.shortened_url];
+          a.href =
+            "data:text/json;charset=utf-8," +
+            encodeURIComponent(JSON.stringify(download, null, 1));
+          a.download = "Saved-URL_" + getDateTimeString() + ".txt";
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        });
+
         showAccessKeyBTN.addEventListener("click", async (event) => {
           Swal.fire({
             background: "#000",
@@ -151,6 +171,7 @@
           output.style.display = "inline-block";
           $("#copy-link").hide();
           $("#redo").hide();
+          $("#download").hide();
           $("#undo").hide();
           $("#h3").hide();
           $("#showAccessKeyBTN").hide();
@@ -162,6 +183,7 @@
           shortUrl.textContent = shortUrlString;
           output.style.display = "inline-block";
           redo.style.display = "inline-block";
+          download.style.display = "inline-block";
           undo.style.display = "inline-block";
           showAccessKeyBTN.style.display = "inline-block";
           $("#shorten").hide();
@@ -190,6 +212,18 @@
           });
         });
 
+        download.addEventListener("click", async (event) => {
+          let a = document.createElement("a");
+          let download = [res.shortId, res.accessKey, res.shortened_url];
+          a.href =
+            "data:text/json;charset=utf-8," +
+            encodeURIComponent(JSON.stringify(download, null, 1));
+          a.download = "Saved-URL_" + getDateTimeString() + ".txt";
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        });
+
         undo.addEventListener("click", async (event) => {
           Swal.fire({
             background: "#000",
@@ -215,6 +249,7 @@
           shortUrl.textContent = shortId;
           output.style.display = "inline-block";
           $("#redo").hide();
+          $("#download").hide();
           $("#undo").hide();
           $("#copy-link").hide();
           $("#h3").hide();
@@ -229,6 +264,7 @@
           showAccessKeyBTN.style.display = "inline-block";
           redo.style.display = "inline-block";
           undo.style.display = "inline-block";
+          download.style.display = "inline-block";
           $("#shorten").hide();
           $("#toggle_contain").hide();
           $("#toggle-switch").hide();
@@ -237,6 +273,7 @@
     } else {
       $("#copy-link").hide();
       $("#redo").hide();
+      $("#download").hide();
       $("#undo").hide();
       $("#h3").hide();
       $("#showAccessKeyBTN").hide();

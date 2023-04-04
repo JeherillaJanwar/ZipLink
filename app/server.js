@@ -113,7 +113,7 @@ mongoose
 
     function isValidAlias(alias) {
       // Check if the alias contains only valid URL characters
-      return /^[a-zA-Z0-9\-_~.]+$/.test(alias);
+      return /^[a-zA-Z0-9\-_~.!]+$/.test(alias);
     }
 
     const now = new Date();
@@ -213,10 +213,26 @@ mongoose
                   )
                 );
               } else {
-                return res.send("Invalid Alias");
+                return res.send(
+                  JSON.stringify(
+                    {
+                      shortId: "Invalid Alias",
+                    },
+                    null,
+                    4
+                  )
+                );
               }
             } else {
-              return res.send("THIS alias isn't available");
+              return res.send(
+                JSON.stringify(
+                  {
+                    shortId: "THIS alias isn't available",
+                  },
+                  null,
+                  4
+                )
+              );
             }
           }
         }
@@ -263,8 +279,8 @@ mongoose
               // Create a new shortened URL
               let newAliasUrl = new Url({
                 originalUrl: url,
-                accessKey: uuid(),
                 _id: alias,
+                accessKey: uuid(),
                 createdAt: when,
                 api: true,
               });

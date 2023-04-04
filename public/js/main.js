@@ -8,9 +8,9 @@
   const redo = document.querySelector("#redo");
   const undo = document.querySelector("#undo");
   const shortenBTN = document.querySelector("#shorten");
-  var toggle = document.getElementById("toggle-switch");
-  var custom_title = document.getElementById("custom");
-  var toggle_contain = document.getElementById("toggle_contain");
+  const toggle = document.getElementById("toggle-switch");
+  const custom_title = document.getElementById("custom");
+  const toggle_contain = document.getElementById("toggle_contain");
   const shortenedUrl = document.getElementById("short-url");
   const showAccessKeyBTN = document.getElementById("showAccessKeyBTN");
   const copyLinkButton = document.getElementById("copy-link");
@@ -110,11 +110,10 @@
           )}&ip=${ip}`
         );
 
-        const shortId = JSON.parse(
-          JSON.stringify(await response.json(), null, 4)
-        );
-        const accessKey = shortId.accessKey;
-        const shortUrlString = `${window.location.href}${shortId.shortId}`;
+        const res = JSON.parse(JSON.stringify(await response.json(), null, 4));
+        const accessKey = res.accessKey;
+        const shortId = res.shortId;
+        const shortUrlString = `${window.location.href}${res.shortId}`;
 
         showAccessKeyBTN.addEventListener("click", async (event) => {
           Swal.fire({
@@ -145,7 +144,8 @@
 
         if (
           shortId === "THIS alias isn't available" ||
-          shortId === "Invalid Alias"
+          shortId === "Invalid Alias" ||
+          shortId === "Invalid URL"
         ) {
           shortUrl.textContent = shortId;
           output.style.display = "inline-block";
@@ -175,13 +175,11 @@
           )}&alias=${alias}&ip=${ip}`
         );
 
-        const shortId = JSON.parse(
-          JSON.stringify(await response.json(), null, 4)
-        );
-        const accessKey = shortId.accessKey;
-        const shortUrlString = `${window.location.href}${shortId.shortId}`;
-        
-        
+        const res = JSON.parse(JSON.stringify(await response.json(), null, 4));
+        const accessKey = res.accessKey;
+        const shortId = res.shortId;
+        const shortUrlString = `${window.location.href}${res.shortId}`;
+
         showAccessKeyBTN.addEventListener("click", async (event) => {
           Swal.fire({
             background: "#000",
@@ -192,9 +190,27 @@
           });
         });
 
+        undo.addEventListener("click", async (event) => {
+          Swal.fire({
+            background: "#000",
+            icon: "warning",
+            position: "center",
+            title: "Delete?",
+            html: `<h3 style="color:white">Delete the URL?</h3>`,
+            confirmButtonText: "Yes, delete the URL",
+            showCancelButton: true,
+            cancelButtonText: `No`,
+          }).then((result) => {
+            if (result.isConfirmed) {
+              delete_url(accessKey);
+            }
+          });
+        });
+
         if (
           shortId === "THIS alias isn't available" ||
-          shortId === "Invalid Alias"
+          shortId === "Invalid Alias" ||
+          shortId === "Invalid URL"
         ) {
           shortUrl.textContent = shortId;
           output.style.display = "inline-block";

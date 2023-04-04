@@ -184,6 +184,7 @@ mongoose
                   shortened_url: short,
                   accessKey: newUrl.accessKey,
                   shortId: newUrl._id,
+                  original_url: newUrl.originalUrl,
                 },
                 null,
                 4
@@ -212,6 +213,7 @@ mongoose
                       shortened_url: short,
                       accessKey: newAliasUrl.accessKey,
                       shortId: newAliasUrl._id,
+                      original_url: newAliasUrl.originalUrl,
                     },
                     null,
                     4

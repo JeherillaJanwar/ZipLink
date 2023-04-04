@@ -128,7 +128,7 @@
 
           download.addEventListener("click", async (event) => {
             let a = document.createElement("a");
-            let download = [res.shortId, res.accessKey, res.shortened_url];
+            let download = [res.shortId, res.accessKey, res.shortened_url, res.original_url];
             a.href =
               "data:text/json;charset=utf-8," +
               encodeURIComponent(JSON.stringify(download, null, 1));
@@ -219,7 +219,7 @@
 
           download.addEventListener("click", async (event) => {
             let a = document.createElement("a");
-            let download = [res.shortId, res.accessKey, res.shortened_url];
+            let download = [res.shortId, res.accessKey, res.shortened_url, res.original_url];
             a.href =
               "data:text/json;charset=utf-8," +
               encodeURIComponent(JSON.stringify(download, null, 1));

@@ -158,7 +158,7 @@ mongoose
 
     // Set up the route for shortening URLs
     app.get("/shorten", async (req, res) => {
-      const { url, alias, ip } = req.query;
+      const { url, alias, ip, date } = req.query;
       var random = await generateUniqueAlias(Url, 8);
 
       if (valid(url)) {
@@ -170,7 +170,7 @@ mongoose
             let newUrl = new Url({
               _id: random,
               originalUrl: url,
-              createdAt: when,
+              createdAt: date,
               ip: ip,
               accessKey: uuid(),
             });
@@ -198,7 +198,7 @@ mongoose
                 let newAliasUrl = new Url({
                   originalUrl: url,
                   _id: alias,
-                  createdAt: when,
+                  createdAt: date,
                   ip: ip,
                   accessKey: uuid(),
                 });
@@ -259,7 +259,7 @@ mongoose
           let newUrl = new Url({
             _id: random,
             originalUrl: url,
-            createdAt: when,
+            createdAt: "Server Location: " + when,
             api: true,
             accessKey: uuid(),
           });
@@ -289,7 +289,7 @@ mongoose
                 originalUrl: url,
                 _id: alias,
                 accessKey: uuid(),
-                createdAt: when,
+                createdAt: "Server Location: " + when,
                 api: true,
               });
               await newAliasUrl.save();

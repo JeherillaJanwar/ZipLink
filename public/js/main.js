@@ -17,6 +17,9 @@
   const delete_URL = document.getElementById("delete_URL");
   const download = document.getElementById("download");
 
+  const now = new Date();
+  const date = now.toUTCString(); // GMT timezone
+
   toggle.addEventListener("change", function () {
     if (this.checked) {
       aliasInput.style.display = "block";
@@ -116,7 +119,7 @@
           const response = await fetch(
             `/shorten?url=${encodeURIComponent(
               url
-            )}&ip=${ip}`
+            )}&ip=${ip}&date=${date}`
           );
 
           const res = JSON.parse(
@@ -197,7 +200,7 @@
           const response = await fetch(
             `/shorten?url=${encodeURIComponent(
               url
-            )}&alias=${alias}&ip=${ip}`
+            )}&alias=${alias}&date=${date}&ip=${ip}`
           );
 
           const res = JSON.parse(

@@ -25,6 +25,7 @@
       aliasInput.style.display = "block";
       custom_title.style.display = "block";
     } else {
+      aliasInput.value = "";
       $("#alias").hide();
       $("#custom").hide();
     }

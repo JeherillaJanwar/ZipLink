@@ -296,3 +296,13 @@ input:checked + .slider:hover:before {
 input:checked + .slider:hover:after {
   background-color: #6ab04c;
 }
+
+
+.swal2-validation-message,
+.swal2-title,
+.swal2-content,
+.swal2-input {
+  text-align: center;
+  color: white !important;
+  background-color: transparent !important;
+}

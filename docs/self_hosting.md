@@ -2,7 +2,8 @@
 
 ## Requirements
 
--   Mandatory: [Node.js](https://nodejs.org/en/) at least 16x (`16.15.1 LTS`) & NPM
+-   Mandatory: [Node.js](https://nodejs.org/en/) at least 16x (`16.15.1 LTS`), best with 20x (`20.0.0 LTS`).
+-   NPM
 -   Mandatory: Your domain name, example: `your.domain.name`
 
 ---
@@ -13,7 +14,7 @@ Install the requirements (Note: Many of the installation steps require `root` or
 # Install NodeJS 16.X and npm
 $ sudo apt update
 $ sudo apt -y install curl dirmngr apt-transport-https lsb-release ca-certificates
-$ curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+$ curl -sL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 $ sudo apt-get install -y nodejs
 $ npm install -g npm@latest
 ```

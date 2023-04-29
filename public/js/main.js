@@ -20,6 +20,14 @@
   const now = new Date();
   const date = now.toUTCString(); // GMT timezone
 
+  input.addEventListener("input", function () {
+    if (input.value === "") {
+      shortenBTN.disabled = true;
+    } else {
+      shortenBTN.disabled = false;
+    }
+  });
+
   toggle.addEventListener("change", function () {
     if (this.checked) {
       aliasInput.style.display = "block";
@@ -118,9 +126,7 @@
       if (valid(url)) {
         if (!alias) {
           const response = await fetch(
-            `/shorten?url=${encodeURIComponent(
-              url
-            )}&ip=${ip}&date=${date}`
+            `/shorten?url=${encodeURIComponent(url)}&ip=${ip}&date=${date}`
           );
 
           const res = JSON.parse(
@@ -132,7 +138,12 @@
 
           download.addEventListener("click", async (event) => {
             let a = document.createElement("a");
-            let download = [res.shortId, res.accessKey, res.shortened_url, res.original_url];
+            let download = [
+              res.shortId,
+              res.accessKey,
+              res.shortened_url,
+              res.original_url,
+            ];
             a.href =
               "data:text/json;charset=utf-8," +
               encodeURIComponent(JSON.stringify(download, null, 1));
@@ -223,7 +234,12 @@
 
           download.addEventListener("click", async (event) => {
             let a = document.createElement("a");
-            let download = [res.shortId, res.accessKey, res.shortened_url, res.original_url];
+            let download = [
+              res.shortId,
+              res.accessKey,
+              res.shortened_url,
+              res.original_url,
+            ];
             a.href =
               "data:text/json;charset=utf-8," +
               encodeURIComponent(JSON.stringify(download, null, 1));
